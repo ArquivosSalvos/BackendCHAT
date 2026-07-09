@@ -1,12 +1,10 @@
-
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const dotenv = require("dotenv");
-const OpenAI = require("openai");
+const dotenv = require('dotenv');
 const cors = require('cors');
 const crypto = require('crypto');
 
@@ -337,41 +335,12 @@ function getNextCpf() {
 const WOOVI_API_URL = 'https://api.woovi.com/api/v1';
 const WOOVI_APP_ID = process.env.WOOVI_APP_ID;
 
-// OpenAI API Configuration
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// --- Rotas HTTP (ChatGPT) ---
-app.post("/api/chat", async (req, res) => {
-  const { message, context } = req.body; // Agora espera 'context' também
-  try {
-    const messagesForOpenAI = [];
-    if (context) {
-      messagesForOpenAI.push({ role: "system", content: context });
-    }
-    messagesForOpenAI.push({ role: "user", content: message });
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo", // Ou outro modelo adequado
-      messages: messagesForOpenAI,
-      max_tokens: 150, // Adicionei max_tokens e temperature para consistência com o frontend original
-      temperature: 0.7
-    });
-    res.json({ reply: completion.choices[0].message.content });
-  } catch (error) {
-    console.error("Erro ao chamar a API do OpenAI:", error.response ? error.response.data : error.message);
-    res.status(500).json({ error: "Erro ao processar sua solicitação com a IA." });
-  }
-});
-
-
 // --- Rotas HTTP (Checkout) ---
 
 // Rota principal para carregar o seu checkout
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'chat', 'index.html'));
-}); // <-- Veja se esse }); não foi apagado por engano!
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Rota para gerar o Pix
 app.post('/api/pix', async (req, res) => {
